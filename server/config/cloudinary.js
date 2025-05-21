@@ -21,15 +21,15 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary,
     params: {
-        // Remove folder parameter to use root directory
+        folder: 'portfolio/projects', // Add projects folder
         allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
         transformation: [{
-            width: 500,
-            height: 500,
+            width: 800, // Larger size for project images
+            height: 600,
             crop: 'fill',
             quality: 'auto'
         }],
-        public_id: (req, file) => `profile_${Date.now()}`
+        public_id: (req, file) => `project_${Date.now()}`
     }
 });
 

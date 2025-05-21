@@ -3,9 +3,11 @@ import { getProjects, deleteProject, addProject } from '../../utils/api';
 import '../../styles/Admin/EditProjects.css';
 
 const EditProjects = () => {
+  // State management
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -15,12 +17,14 @@ const EditProjects = () => {
     link: ''
   });
 
+  // Fetch projects on component mount
   useEffect(() => {
     fetchProjects();
   }, []);
 
   const fetchProjects = async () => {
     try {
+      setLoading(true);
       const data = await getProjects();
       setProjects(data);
     } catch (error) {
@@ -46,8 +50,12 @@ const EditProjects = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        setError('Image size should be less than 5MB');
+        return;
+      }
+      
       setSelectedImage(file);
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -65,19 +73,24 @@ const EditProjects = () => {
     }
 
     try {
+      setSaveLoading(true);
+      setError(null);
+
       const formData = new FormData();
+      formData.append('projectImage', selectedImage);
       formData.append('name', newProject.name);
       formData.append('details', newProject.details);
       formData.append('link', newProject.link);
-      formData.append('projectImage', selectedImage);
 
       const addedProject = await addProject(formData);
-      setProjects([...projects, addedProject]);
+      setProjects(prevProjects => [...prevProjects, addedProject]);
       setIsModalOpen(false);
       resetForm();
     } catch (error) {
-      setError('Failed to add project');
+      setError('Failed to add project. Please try again.');
       console.error('Error adding project:', error);
+    } finally {
+      setSaveLoading(false);
     }
   };
 
@@ -208,8 +221,12 @@ const EditProjects = () => {
               </div>
 
               <div className="modal-actions">
-                <button type="submit" className="save-button">
-                  Save Project
+                <button 
+                  type="submit" 
+                  className="save-button"
+                  disabled={saveLoading}
+                >
+                  {saveLoading ? 'Saving...' : 'Save Project'}
                 </button>
                 <button 
                   type="button" 

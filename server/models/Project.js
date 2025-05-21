@@ -9,11 +9,11 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  imageUrl: {
+  link: {
     type: String,
     required: true
   },
-  link: {
+  imageUrl: {
     type: String,
     required: true
   }

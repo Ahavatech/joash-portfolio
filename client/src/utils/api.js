@@ -1,12 +1,10 @@
 import axios from 'axios';
 
-const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-production-url.com/api'
-  : 'http://localhost:5000/api';
-
 const api = axios.create({
-  baseURL: API_URL,
-  timeout: 5000,
+  baseURL: 'http://localhost:5000/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 // Fallback data for development
@@ -102,15 +100,6 @@ export const deleteSkill = async (skillId) => {
     throw error;
   }
 };
-export const getProjects = async () => {
-  try {
-    const response = await api.get('/projects');
-    return response.data;
-  } catch (error) {
-    console.warn('Using fallback data for Projects section:', error.message);
-    return fallbackData.projects;
-  }
-};
 
 export const getReviews = async () => {
   try {
@@ -194,11 +183,20 @@ export const updateCredentials = async (credentials) => {
     throw error;
   }
 };
-// ...existing code...
+
+export const getProjects = async () => {
+  try {
+    const response = await api.get('/projects');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    throw error;
+  }
+};
 
 export const addProject = async (formData) => {
   try {
-    const response = await api.post('/admin/projects', formData, {
+    const response = await api.post('/projects', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -210,12 +208,10 @@ export const addProject = async (formData) => {
   }
 };
 
-// ...existing code...
-
 export const deleteProject = async (projectId) => {
   try {
-    await api.delete(`/admin/projects/${projectId}`);
-    return true;
+    const response = await api.delete(`/projects/${projectId}`);
+    return response.data;
   } catch (error) {
     console.error('Error deleting project:', error);
     throw error;

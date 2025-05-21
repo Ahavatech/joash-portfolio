@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const cloudinary = require('../config/cloudinary');
+const { cloudinary, storage } = require('../config/cloudinary');
 const Project = require('../models/Project');
 
-const upload = multer({ dest: 'uploads/' });
+// Use the configured Cloudinary storage
+const upload = multer({ storage });
 
 // Get all projects
 router.get('/', async (req, res) => {
@@ -20,29 +21,29 @@ router.get('/', async (req, res) => {
 // Add new project with image
 router.post('/', upload.single('projectImage'), async (req, res) => {
   try {
-    const { name, details, link } = req.body;
-
     if (!req.file) {
       return res.status(400).json({ error: 'Project image is required' });
     }
 
-    // Upload image to Cloudinary
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'portfolio/projects'
-    });
-
+    // Create new project using the Cloudinary URL from req.file
     const project = new Project({
-      name,
-      details,
-      imageUrl: result.secure_url,
-      link
+      name: req.body.name,
+      details: req.body.details,
+      link: req.body.link,
+      imageUrl: req.file.path // Cloudinary URL is automatically stored in path
     });
 
     const savedProject = await project.save();
+    console.log('Saved project:', savedProject);
+
     res.status(201).json(savedProject);
+
   } catch (error) {
-    console.error('Error adding project:', error);
-    res.status(500).json({ error: 'Failed to add project' });
+    console.error('Server error:', error);
+    res.status(500).json({ 
+      error: 'Failed to add project',
+      details: error.message 
+    });
   }
 });
 
@@ -54,15 +55,14 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    // Extract public_id from Cloudinary URL
-    const publicId = project.imageUrl.split('/').slice(-1)[0].split('.')[0];
-    
-    // Delete image from Cloudinary
-    await cloudinary.uploader.destroy(`portfolio/projects/${publicId}`);
-    
-    // Delete project from database
+    // Delete from Cloudinary if there's an image
+    if (project.imageUrl) {
+      const publicId = project.imageUrl.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(`portfolio/projects/${publicId}`);
+    }
+
     await Project.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: 'Project deleted successfully' });
+    res.json({ message: 'Project deleted successfully' });
   } catch (error) {
     console.error('Error deleting project:', error);
     res.status(500).json({ error: 'Failed to delete project' });

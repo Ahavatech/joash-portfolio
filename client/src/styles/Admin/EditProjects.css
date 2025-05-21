@@ -1,58 +1,11 @@
-.edit-projects {
-  padding: 2rem;
-}
-
-.projects-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.project-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  padding: 1.5rem;
-  background: var(--background-color);
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.project-info h4 {
-  margin: 0 0 0.5rem 0;
-  color: var(--text-color);
-}
-
-.project-info p {
-  margin: 0 0 1rem 0;
-  color: #666;
-}
-
-.project-info a {
-  color: var(--primary-color);
-  text-decoration: none;
-}
-
-.delete-button {
-  background: none;
-  border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
-}
-
-.delete-button:hover {
-  opacity: 1;
-}
-
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,56 +14,167 @@
 
 .modal {
   background: white;
+  border-radius: 16px;
   padding: 2rem;
-  border-radius: 12px;
   width: 90%;
-  max-width: 500px;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .modal h3 {
-  margin: 0 0 1.5rem 0;
+  color: var(--text-color);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f1f1f1;
 }
 
+/* Form Styles */
 .form-group {
   margin-bottom: 1.5rem;
 }
 
 .form-group label {
   display: block;
+  font-weight: 600;
   margin-bottom: 0.5rem;
-  font-weight: 500;
+  color: var(--text-color);
 }
 
-.form-group input,
+.image-upload-container {
+  border: 2px dashed var(--secondary-color);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.image-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  cursor: pointer;
+  padding: 1rem;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.image-upload-label:hover {
+  background: #f1f3f5;
+}
+
+.upload-placeholder {
+  color: #6c757d;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.upload-placeholder::before {
+  content: "📸";
+  font-size: 1.5rem;
+}
+
+.image-preview {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+}
+
+/* Input Fields */
+.form-group input[type="text"],
+.form-group input[type="url"],
 .form-group textarea {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
 }
 
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Button Styles */
 .modal-actions {
   display: flex;
   gap: 1rem;
-  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f1f1f1;
 }
 
 .save-button,
 .cancel-button {
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  cursor: pointer;
   font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .save-button {
   background: var(--primary-color);
   color: white;
   border: none;
+  flex: 1;
+}
+
+.save-button:hover {
+  background: var(--secondary-color);
+  transform: translateY(-1px);
 }
 
 .cancel-button {
-  background: #e2e8f0;
+  background: #f1f3f5;
+  color: #4a5568;
   border: none;
-  color: #64748b;
+  flex: 1;
+}
+
+.cancel-button:hover {
+  background: #e9ecef;
+}
+
+/* Error Message */
+.error-message {
+  color: #e53e3e;
+  padding: 0.75rem;
+  background: #fff5f5;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+  .modal {
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .save-button,
+  .cancel-button {
+    width: 100%;
+  }
 }
